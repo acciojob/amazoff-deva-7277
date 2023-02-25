@@ -24,6 +24,8 @@ public class OrderController {
 
     HashMap<String, DeliveryPartner> deliveryPartnerMap = new HashMap<>();
 
+    HashMap<Order , DeliveryPartner> partnerOrderMap = new HashMap<>();
+
 
     @PostMapping("/add-order")
     public ResponseEntity<String> addOrder(@RequestBody Order order){
@@ -38,13 +40,14 @@ public class OrderController {
 
     @PostMapping("/add-partner/{partnerId}")
     public ResponseEntity<String> addPartner(@PathVariable String partnerId){
-
+        DeliveryPartner deliveryPartner = new DeliveryPartner(partnerId);
+        deliveryPartnerMap.put("partnerId",  deliveryPartner);
         return new ResponseEntity<>("New delivery partner added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("/add-order-partner-pair")
     public ResponseEntity<String> addOrderPartnerPair(@RequestParam String orderId, @RequestParam String partnerId){
-
+        partnerOrderMap.put(orderMap.get(orderId), deliveryPartnerMap.get(partnerId));
         //This is basically assigning that order to that partnerId
         return new ResponseEntity<>("New order-partner pair added successfully", HttpStatus.CREATED);
     }
@@ -65,6 +68,9 @@ public class OrderController {
     public ResponseEntity<DeliveryPartner> getPartnerById(@PathVariable String partnerId){
 
         DeliveryPartner deliveryPartner = null;
+        if(deliveryPartnerMap.containsKey(partnerId)){
+            deliveryPartner = deliveryPartnerMap.get(partnerId);
+        }
 
         //deliveryPartner should contain the value given by partnerId
 
@@ -73,6 +79,7 @@ public class OrderController {
 
     @GetMapping("/get-order-count-by-partner-id/{partnerId}")
     public ResponseEntity<Integer> getOrderCountByPartnerId(@PathVariable String partnerId){
+
 
         Integer orderCount = 0;
 
@@ -133,6 +140,7 @@ public class OrderController {
 
         //Delete the partnerId
         //And push all his assigned orders to unassigned orders.
+        deliveryPartnerMap.remove(partnerId);
 
         return new ResponseEntity<>(partnerId + " removed successfully", HttpStatus.CREATED);
     }
@@ -142,6 +150,8 @@ public class OrderController {
 
         //Delete an order and also
         // remove it from the assigned order of that partnerId
+
+        orderMap.remove(orderId);
 
         return new ResponseEntity<>(orderId + " removed successfully", HttpStatus.CREATED);
     }
