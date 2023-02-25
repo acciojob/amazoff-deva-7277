@@ -140,6 +140,7 @@ public class OrderController {
 
         //Delete the partnerId
         //And push all his assigned orders to unassigned orders.
+        if(deliveryPartnerMap.containsKey(partnerId))
         deliveryPartnerMap.remove(partnerId);
 
         return new ResponseEntity<>(partnerId + " removed successfully", HttpStatus.CREATED);
@@ -151,6 +152,7 @@ public class OrderController {
         //Delete an order and also
         // remove it from the assigned order of that partnerId
 
+        if(orderMap.containsKey(orderId))
         orderMap.remove(orderId);
 
         return new ResponseEntity<>(orderId + " removed successfully", HttpStatus.CREATED);
