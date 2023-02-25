@@ -1,6 +1,11 @@
 package com.driver;
 
+import jdk.jfr.DataAmount;
+import lombok.Data;
+
+@Data
 public class DeliveryPartner {
+
 
     private String id;
     private int numberOfOrders;

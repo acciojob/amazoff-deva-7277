@@ -1,5 +1,6 @@
 package com.driver;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("orders")
 public class OrderController {
 
+    HashMap<String, Order> orderMap = new HashMap<>();
+
+    HashMap<String, DeliveryPartner> deliveryPartnerMap = new HashMap<>();
+
 
     @PostMapping("/add-order")
     public ResponseEntity<String> addOrder(@RequestBody Order order){
-
+        orderMap.put(order.getId(), order);
+//        System.out.println("Orders presnt are: ");
+//        for(String i: orderMap.keySet()){
+//            System.out.println(orderMap.get(i));
+//        }
         return new ResponseEntity<>("New order added successfully", HttpStatus.CREATED);
     }
+
 
     @PostMapping("/add-partner/{partnerId}")
     public ResponseEntity<String> addPartner(@PathVariable String partnerId){
@@ -41,11 +51,14 @@ public class OrderController {
 
     @GetMapping("/get-order-by-id/{orderId}")
     public ResponseEntity<Order> getOrderById(@PathVariable String orderId){
-
         Order order= null;
+        if(orderMap.containsKey(orderId)){
+            order = orderMap.get(orderId);
+        }
+
         //order should be returned with an orderId.
 
-        return new ResponseEntity<>(order, HttpStatus.CREATED);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
     @GetMapping("/get-partner-by-id/{partnerId}")
@@ -80,7 +93,9 @@ public class OrderController {
     @GetMapping("/get-all-orders")
     public ResponseEntity<List<String>> getAllOrders(){
         List<String> orders = null;
-
+        for(String id: orderMap.keySet()){
+            orders.add(id);
+        }
         //Get all orders
         return new ResponseEntity<>(orders, HttpStatus.CREATED);
     }
